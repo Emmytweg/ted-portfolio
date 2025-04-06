@@ -8,104 +8,74 @@ import {
 import { LinkedinIcon } from "@/components/ui/linkedin";
 import { FacebookIcon } from "../ui/facebook";
 import { TwitterIcon } from "../ui/twitter";
-import Image from "next/image";
 import Link from "next/link";
 import { FaTiktok } from "react-icons/fa";
-import { DarkMode } from "../../../Helper/DarkMode";
 import { useEffect, useState } from "react";
-import MobileSidebar from "../ui/MobileSideBar"; // Import the mobile sidebar
+import MobileSidebar from "../../../src/components/ui/MobileSideBar";
+import Image from "next/image";
+import logo from "../../../images/ted3.png";
+import { PT_Sans_Narrow } from "next/font/google";
+
+const ptSansNarrow = PT_Sans_Narrow({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  display: "swap",
+});
 
 export function NavBar() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <Menubar
-      className={`flex justify-between items-center rounded-b-none pl-10 pr-10 h-16 bg-transparent text-white border-none w-full overflow-hidden fixed z-10 transition-all duration-500 ${
-        isScrolled ? "bg-black" : " fixed"
+      className={`${ptSansNarrow.className} fixed z-50 w-full flex items-center justify-between px-4 lg:px-10 h-16 text-white border-none transition-all duration-500 ${
+        isScrolled ? "bg-black shadow-md" : "bg-transparent"
       }`}
     >
-      {/* Mobile Sidebar (visible only on small screens) */}
-      <div className="lg:hidden">
+      {/* Mobile: Logo + Sidebar Toggle */}
+      <div className="flex w-full items-center justify-between lg:hidden">
+        <Image src={logo} alt="logo" height={40} width={40} />
         <MobileSidebar />
       </div>
 
-      {/* Logo */}
-      <Image src="/favicon.ico" alt="logo" height={40} width={40} />
+      {/* Desktop: Links + Social Icons */}
+      <div className="hidden lg:flex w-full justify-between items-center">
+        <div className="flex items-center gap-6">
+          <Image src={logo} alt="logo" height={40} width={40} />
+          {[
+            { href: "/", label: "Home" },
+            { href: "/about", label: "About" },
+            { href: "/project", label: "Project" },
+            { href: "/contact", label: "Contact" },
+            { href: "/testimonials", label: "Testimonials" },
+          ].map(({ href, label }) => (
+            <MenubarMenu key={label}>
+              <MenubarTrigger>
+                <Link
+                  className="text-lg font-bold hover:text-blue-500 transition"
+                  href={href}
+                >
+                  {label}
+                </Link>
+              </MenubarTrigger>
+            </MenubarMenu>
+          ))}
+        </div>
 
-      {/* Desktop Navigation Links (Hidden on small screens) */}
-      <div className="hidden lg:flex gap-6">
-        <MenubarMenu>
-          <MenubarTrigger>
-            <Link
-              className="text-lg font-bold  hover:text-blue-950 transition-all duration-300 "
-              href="/"
-            >
-              Home
-            </Link>
-          </MenubarTrigger>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>
-            <Link
-              className="text-lg font-bold  hover:text-blue-950 transition-all duration-300 font-poppins"
-              href="/about"
-            >
-              About
-            </Link>
-          </MenubarTrigger>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>
-            <Link
-              className="text-lg font-bold  hover:text-blue-950 transition-all duration-300 font-poppins"
-              href="/project"
-            >
-              Project
-            </Link>
-          </MenubarTrigger>
-        </MenubarMenu>
-        <MenubarMenu>
-          <MenubarTrigger>
-            <Link
-              className="text-lg font-bold  hover:text-blue-950 transition-all duration-300 font-poppins"
-              href="/contact"
-            >
-              Contact
-            </Link>
-          </MenubarTrigger>
-        </MenubarMenu>
-      </div>
-
-      {/* Social Media Icons */}
-      <div className="hidden lg:flex gap-6 items-center">
-        <Link href="#">
-          <FacebookIcon className="h-16 w-16 hover:text-blue-950 transition-all duration-300" />
-        </Link>
-        <Link href="#">
-          <FaTiktok className="h-6 w-6 hover:text-blue-950 transition-all duration-300" />
-        </Link>
-        <Link href="#">
-          <LinkedinIcon className="h-16 w-16  hover:text-blue-950 transition-all duration-300" />
-        </Link>
-        <Link href="#">
-          <TwitterIcon className="h-16 w-16  hover:text-blue-950 transition-all duration-300" />
-        </Link>
- 
+        <div className="flex gap-4 items-center">
+          <Link href="#"><FacebookIcon className="h-8 w-8 hover:text-blue-500 transition" /></Link>
+          <Link href="#"><FaTiktok className="h-6 w-6 hover:text-blue-500 transition" /></Link>
+          <Link href="#"><LinkedinIcon className="h-8 w-8 hover:text-blue-500 transition" /></Link>
+          <Link href="#"><TwitterIcon className="h-8 w-8 hover:text-blue-500 transition" /></Link>
+        </div>
       </div>
     </Menubar>
   );
